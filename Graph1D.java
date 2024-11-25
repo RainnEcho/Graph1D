@@ -2,33 +2,46 @@ import java.util.*;
 
 public class Graph1D {
 
-    // member variabels
+    // member variables
     public int base_len;
     public int[] map;
     public List<List<Integer>> list;
 
-    // default constructor
+    /** default constructor */
     public Graph1D () {}
 
-    // constructor
+    /** constructor */
     public Graph1D (int capacity) {
+        // base length: the number of vertices of the first row in the initial 2D graph
         base_len = capacity - 1;
-        int arr_len = (int) (Math.pow(base_len, 2) + base_len) / 2;
+
+        // formula to calculate the length of the 1D array converted
+        int arr_len = (base_len * (base_len + 1)) / 2;
+
+        // initialize the 1D array (map) and fill by Integer.MAX_VALUE
         map = new int[arr_len];
         Arrays.fill(map, Integer.MAX_VALUE);
+
+        // initialize the array list to sort the horizontal and vertical coordinates of every vertex
         list = new ArrayList<>(arr_len);
         for (int i = 0; i < arr_len; i++) list.add(new ArrayList<>(Arrays.asList(null, null)));
     }
 
-    /** function: return the base length */
+    /** get the base length */
     public int getBaseLength () { return base_len; }
 
-    /** function: add two vertices with a weighted edge */
+    /** get the length of the map */
+    public int getMapLength () { return map.length; }
+
+    /** print the list of the graph */
+    public void displayList () { System.out.printf ("list: %s\n", list); }
+
+    /** add two vertices with a weighted edge */
     public void addEdge (int vertex1, int vertex2, int weight) {
         if (vertex2 <= vertex1) throw new IllegalArgumentException("illegal parameter sequence");
         int index = (vertex1 == 0) 
             ? vertex2 - 1 
-            : (vertex2 - vertex1) + (base_len * vertex1) - (int) Math.pow((vertex1 - 1), 2) - 1;
+            : vertex2 + vertex1 + vertex1 * (base_len - vertex1) - 2;
 
         map[index] = weight;
 
@@ -36,19 +49,20 @@ public class Graph1D {
         list.get(index).set(1, vertex2);
     }
 
-    /** function: remove two vertices */
+    /** remove two vertices */
     public void removeEdge (int vertex1, int vertex2) {
         if (vertex2 <= vertex1) throw new IllegalArgumentException("illegal parameter sequence");
         int index = (vertex1 == 0) 
             ? vertex2 - 1 
-            : (vertex2 - vertex1) + (base_len * vertex1) - (int) Math.pow((vertex1 - 1), 2) - 1;
+            : vertex2 + vertex1 + vertex1 * (base_len - vertex1) - 2;
+
         map[index] = Integer.MAX_VALUE;
 
         list.get(index).set(0, null);
         list.get(index).set(1, null);
     }
 
-    /** function: get the sum of minimum spanning tree (MST) */
+    /** get the sum of minimum spanning tree (MST) */
     public int getMSTValue () {
         Queue<Integer> queue = Arrays.stream(map)
                                      .boxed()
@@ -69,17 +83,24 @@ public class Graph1D {
 
     /** test used main function */
     public static void main(String[] args) {
+        // example instance Graph1D for test
         Graph1D graph = new Graph1D(4);
 
+        // add edges
         graph.addEdge(0, 1, 6);
-        graph.addEdge(0, 2, 1);
+        graph.addEdge(0, 2, 9);
         graph.addEdge(0, 3, 3);
         graph.addEdge(1, 2, 8);
         graph.addEdge(1, 3, 6);
-        graph.addEdge(2, 3, 9);
+        graph.addEdge(2, 3, 1);
 
-        System.out.printf ("%-12s%d", "base length: ", graph.getBaseLength());
+        // print the base length
+        System.out.printf ("%-12s%d\n", "base length: ", graph.getBaseLength());
 
-        System.out.printf ("%-10s%d", "MST value: ", graph.getMSTValue());
+        // print the minimum spanning tree (MST) value
+        System.out.printf ("%-10s%d\n", "MST value: ", graph.getMSTValue()); // expected output of this test case: 10
+
+        // print the list
+        graph.displayList();
     }
 }
