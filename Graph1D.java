@@ -15,14 +15,14 @@ public class Graph1D {
         // base length: the number of vertices of the first row in the initial 2D graph
         base_len = capacity - 1;
 
-        // formula to calculate the length of the 1D array converted
+        // the formula to calculate the length of the 1D array converted
         int arr_len = (base_len * (base_len + 1)) / 2;
 
         // initialize the 1D array (map) and fill by Integer.MAX_VALUE
         map = new int[arr_len];
         Arrays.fill(map, Integer.MAX_VALUE);
 
-        // initialize the array list to sort the horizontal and vertical coordinates of every vertex
+        // initialize the array list to sort the horizontal and vertical coordinates of every vertex, initially are null
         list = new ArrayList<>(arr_len);
         for (int i = 0; i < arr_len; i++) list.add(new ArrayList<>(Arrays.asList(null, null)));
     }
@@ -95,10 +95,10 @@ public class Graph1D {
         graph.addEdge(2, 3, 1);
 
         // print the base length
-        System.out.printf ("%-12s%d\n", "base length: ", graph.getBaseLength());
+        System.out.printf ("%s%d\n", "base length: ", graph.getBaseLength());
 
         // print the minimum spanning tree (MST) value
-        System.out.printf ("%-10s%d\n", "MST value: ", graph.getMSTValue()); // expected output of this test case: 10
+        System.out.printf ("%s%d\n", "MST value: ", graph.getMSTValue());
 
         // print the list
         graph.displayList();
