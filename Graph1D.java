@@ -64,23 +64,23 @@ public class Graph1D {
 
     /** get the sum of MST */
     public int getMSTValue () {
-        // convert the map to priority queue
+        // convert the map to a priority queue
         Queue<Integer> queue = Arrays.stream(map)
                                      .boxed()
                                      .collect(PriorityQueue::new, PriorityQueue::add, PriorityQueue::addAll);
-        // initialize a hash set to store cordinates to identify if a vertex is addable in the MST
+        // initialize a hash set to store coordinates to identify the addability of edges
         Set<Integer> set = new HashSet<>();
         int sum = 0, count = 0, size = queue.size();
         for (int i = 0; i < size; i++) {
             // identify the addability of each edge
             if (list.get(i).get(0) != null && !(set.contains(list.get(i).get(0)) && set.contains(list.get(i).get(1)))) {
                     sum += queue.poll();
-                    // store the coordinate in the hash set for further judgements
+                    // store the 2D coordinate in the hash set for further judgements
                     set.add(list.get(i).get(0));
                     set.add(list.get(i).get(1));
                     count++;
             } else queue.poll();
-            // break the loop when m = n - 1 (m = base_len)
+            // break the loop when m = n - 1 (m = base length)
             if (count == base_len) break;
         }
         return sum;
@@ -100,12 +100,12 @@ public class Graph1D {
         graph.addEdge(2, 3, 1);
 
         // print the base length
-        System.out.printf ("%s%d\n", "base length: ", graph.getBaseLength());
+        System.out.printf ("%s%d\n", "base length: ", graph.getBaseLength()); //output: 3
 
         // print the MST value
-        System.out.printf ("%s%d\n", "MST value: ", graph.getMSTValue());
+        System.out.printf ("%s%d\n", "MST value: ", graph.getMSTValue()); // output: 10
 
         // print the list
-        graph.displayList();
+        graph.displayList(); // print the member list
     }
 }
