@@ -30,11 +30,14 @@ public class Graph1D {
     /** get the base length */
     public int getBaseLength () { return base_len; }
 
-    /** get the length of the map */
-    public int getMapLength () { return map.length; }
+    /** get the length of the graph */
+    public int getGraphLength () { return map.length; }
 
-    /** print the list of the graph */
+    /** print the list of index */
     public void displayList () { System.out.printf ("list: %s\n", list); }
+
+    /** print the graph */
+    public void displayGraph () { System.out.printf ("graph: %s\n", Arrays.toString(map)); }
 
     /** add two vertices */
     public void addEdge (int vertex1, int vertex2, int weight) {
@@ -92,20 +95,26 @@ public class Graph1D {
         Graph1D graph = new Graph1D(4);
 
         // add edges
-        graph.addEdge(0, 1, 6);
-        graph.addEdge(0, 2, 9);
-        graph.addEdge(0, 3, 3);
-        graph.addEdge(1, 2, 8);
+        graph.addEdge(0, 1, 1);
+        graph.addEdge(0, 2, 3);
+        graph.addEdge(0, 3, 9);
+        graph.addEdge(1, 2, 6);
         graph.addEdge(1, 3, 6);
-        graph.addEdge(2, 3, 1);
+        graph.addEdge(2, 3, 8);
 
         // print the base length
-        System.out.printf ("%s%d\n", "base length: ", graph.getBaseLength()); //output: 3
+        System.out.printf ("base length: %d\n", graph.getBaseLength());
+
+        // print the graph length
+        System.out.printf ("graph length: %d\n", graph.getGraphLength());
+
+        // print the list of index
+        graph.displayList();
+
+        // print the graph
+        graph.displayGraph();
 
         // print the MST value
-        System.out.printf ("%s%d\n", "MST value: ", graph.getMSTValue()); // output: 10
-
-        // print the list
-        graph.displayList(); // print the member list
+        System.out.printf ("MST Value: %d\n", graph.getMSTValue());
     }
 }
