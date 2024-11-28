@@ -124,7 +124,6 @@ public class Graph1D {
 }
 
 class Builder {
-
     @SuppressWarnings("ConvertToTryWithResources")
 
     /** build an instance Graph1D automatically by a Scanner */
