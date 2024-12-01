@@ -33,6 +33,9 @@ public class Graph1D {
     /** get the length of the graph */
     public int getGraphLength () { return map.length; }
 
+    /** get the original 2D coordinate of an index */
+    public List<Integer> getOriginalCoordinate (int idx) { return list.get(idx); }
+
     /** print the list of index */
     public void displayList () { System.out.printf ("list: %s\n", list); }
 
@@ -90,6 +93,44 @@ public class Graph1D {
         return sum;
     }
 
+    /** generate the MST */
+    public void generateMST () {
+        Queue<Integer> queue = Arrays.stream(map)
+                                     .boxed()
+                                     .collect(PriorityQueue::new, PriorityQueue::add, PriorityQueue::addAll);
+        Set<Integer> set = new HashSet<>();
+        Map<Integer, Integer> hash_map = new HashMap<>();
+        int count = 0, size = queue.size();
+
+        for (int i = 0; i < size; i++) {
+            if (list.get(i).get(0) != null && !(set.contains(list.get(i).get(0)) && set.contains(list.get(i).get(1)))) {
+                if (! hash_map.containsKey(queue.peek())) {
+                    hash_map.put(queue.peek(), 1);
+                } else {
+                    int replace = hash_map.get(queue.peek()) + 1;
+                    hash_map.put(queue.peek(), replace);
+                }
+
+                set.add(list.get(i).get(0));
+                set.add(list.get(i).get(1));
+                count++;
+            }
+
+            queue.poll();
+            if (count == base_len) break;
+        }
+
+        for (int i = 0; i < size; i++) {
+            if (! hash_map.containsKey(map[i])) {
+                map[i] = Integer.MAX_VALUE;
+            } else {
+                int remaining = hash_map.get(map[i]) - 1;
+                if (remaining == 0) hash_map.remove(map[i]);
+                else hash_map.put(map[i], remaining);
+            }
+        }
+    }
+
     /** test used main function */
     public static void main(String[] args) {
         // instance Graph1D for test
@@ -118,7 +159,10 @@ public class Graph1D {
         // print the MST value
         System.out.printf ("MST Value: %d\n", graph.getMSTValue());
 
-        // build an instance Graph1D
-        Builder.buildGraph1D();
+        // generate MST
+        graph.generateMST();
+
+        // print the graph after MST generation
+        System.out.printf ("%s\n", Arrays.toString(graph.map));
     }
 }

@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Builder {
+class Builder {
     @SuppressWarnings("ConvertToTryWithResources")
 
     /** build an instance Graph1D automatically by a Scanner */
