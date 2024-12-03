@@ -75,16 +75,24 @@ public class Graph1D {
         Queue<Integer> queue = Arrays.stream(map)
                                      .boxed()
                                      .collect(PriorityQueue::new, PriorityQueue::add, PriorityQueue::addAll);
+
+        List<List<Integer>> sorted = new ArrayList<>(list);
+        Collections.sort(sorted, (a, b) -> {
+            int indexA = list.indexOf(a);
+            int indexB = list.indexOf(b);
+            return Integer.compare(map[indexA], map[indexB]);
+        });
+
         // initialize a hash set to store coordinates to identify the addability of edges
         Set<Integer> set = new HashSet<>();
         int sum = 0, count = 0, size = queue.size();
         for (int i = 0; i < size; i++) {
             // identify the addability of each edge
-            if (list.get(i).get(0) != null && !(set.contains(list.get(i).get(0)) && set.contains(list.get(i).get(1)))) {
+            if (sorted.get(i).get(0) != null && !(set.contains(sorted.get(i).get(0)) && set.contains(sorted.get(i).get(1)))) {
                     sum += queue.poll();
                     // store the 2D coordinate in the hash set for further judgements
-                    set.add(list.get(i).get(0));
-                    set.add(list.get(i).get(1));
+                    set.add(sorted.get(i).get(0));
+                    set.add(sorted.get(i).get(1));
                     count++;
             } else queue.poll();
             // break the loop when m = n - 1 (m = base length)
@@ -94,40 +102,49 @@ public class Graph1D {
     }
 
     /** generate the MST */
-    public void generateMST () {
+    public void generateMST_Gen2 () {
         Queue<Integer> queue = Arrays.stream(map)
                                      .boxed()
                                      .collect(PriorityQueue::new, PriorityQueue::add, PriorityQueue::addAll);
+
+        List<List<Integer>> sorted = new ArrayList<>(list);
+        Collections.sort(sorted, (a, b) -> {
+            int indexA = list.indexOf(a);
+            int indexB = list.indexOf(b);
+            return Integer.compare(map[indexA], map[indexB]);
+        });
+
         Set<Integer> set = new HashSet<>();
-        Map<Integer, Integer> hash_map = new HashMap<>();
+        Map<Integer, List<Boolean>> hash_map = new HashMap<>();
         int count = 0, size = queue.size();
 
         for (int i = 0; i < size; i++) {
-            if (list.get(i).get(0) != null && !(set.contains(list.get(i).get(0)) && set.contains(list.get(i).get(1)))) {
-                if (! hash_map.containsKey(queue.peek())) {
-                    hash_map.put(queue.peek(), 1);
-                } else {
-                    int replace = hash_map.get(queue.peek()) + 1;
-                    hash_map.put(queue.peek(), replace);
-                }
-
-                set.add(list.get(i).get(0));
-                set.add(list.get(i).get(1));
+            boolean checkpoint = (sorted.get(i).get(0) != null && !(set.contains(sorted.get(i).get(0)) && set.contains(sorted.get(i).get(1))));
+            if (hash_map.containsKey(queue.peek())) {
+                hash_map.get(queue.peek()).add(checkpoint);
+            } else {
+                hash_map.put(queue.peek(), new ArrayList<>(Arrays.asList(checkpoint)));
+            }
+            if (checkpoint) {
+                set.add(sorted.get(i).get(0));
+                set.add(sorted.get(i).get(1));
                 count++;
             }
-
             queue.poll();
             if (count == base_len) break;
         }
 
         for (int i = 0; i < size; i++) {
-            if (! hash_map.containsKey(map[i])) {
-                map[i] = Integer.MAX_VALUE;
+            if (hash_map.containsKey(map[i])) {
+                List<Boolean> map_val = hash_map.get(map[i]);
+                if (map_val != null) {
+                    if (!map_val.get(0)) map[i] = Integer.MAX_VALUE;
+                    if (map_val.size() == 1) hash_map.remove(map[i]);
+                    else map_val.remove(0);
+                }
             } else {
-                int remaining = hash_map.get(map[i]) - 1;
-                if (remaining == 0) hash_map.remove(map[i]);
-                else hash_map.put(map[i], remaining);
-            }
+                map[i] = Integer.MAX_VALUE;
+            }            
         }
     }
 
@@ -160,9 +177,9 @@ public class Graph1D {
         System.out.printf ("MST Value: %d\n", graph.getMSTValue());
 
         // generate MST
-        graph.generateMST();
+        graph.generateMST_Gen2();
 
-        // print the graph after MST generation
-        System.out.printf ("%s\n", Arrays.toString(graph.map));
+        // print the graph (after MST generation)
+        graph.displayGraph();
     }
 }
