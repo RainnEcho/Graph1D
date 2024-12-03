@@ -76,6 +76,7 @@ public class Graph1D {
                                      .boxed()
                                      .collect(PriorityQueue::new, PriorityQueue::add, PriorityQueue::addAll);
 
+        // convert the list of the graph at the same time
         List<List<Integer>> sorted = new ArrayList<>(list);
         Collections.sort(sorted, (a, b) -> {
             int indexA = list.indexOf(a);
@@ -103,10 +104,12 @@ public class Graph1D {
 
     /** generate the MST */
     public void generateMST_Gen2 () {
+        // convert the map to a priority queue
         Queue<Integer> queue = Arrays.stream(map)
                                      .boxed()
                                      .collect(PriorityQueue::new, PriorityQueue::add, PriorityQueue::addAll);
 
+        // convert the list of the graph at the same time
         List<List<Integer>> sorted = new ArrayList<>(list);
         Collections.sort(sorted, (a, b) -> {
             int indexA = list.indexOf(a);
@@ -114,11 +117,13 @@ public class Graph1D {
             return Integer.compare(map[indexA], map[indexB]);
         });
 
+        // initialize a hash set to store coordinates to identify the addability of edges
         Set<Integer> set = new HashSet<>();
         Map<Integer, List<Boolean>> hash_map = new HashMap<>();
         int count = 0, size = queue.size();
 
         for (int i = 0; i < size; i++) {
+            // identify the addability of each edge
             boolean checkpoint = (sorted.get(i).get(0) != null && !(set.contains(sorted.get(i).get(0)) && set.contains(sorted.get(i).get(1))));
             if (hash_map.containsKey(queue.peek())) {
                 hash_map.get(queue.peek()).add(checkpoint);
@@ -126,14 +131,17 @@ public class Graph1D {
                 hash_map.put(queue.peek(), new ArrayList<>(Arrays.asList(checkpoint)));
             }
             if (checkpoint) {
+                // store the 2D coordinate in the hash set for further judgements
                 set.add(sorted.get(i).get(0));
                 set.add(sorted.get(i).get(1));
                 count++;
             }
             queue.poll();
+            // break the loop when m = n - 1 (m = base length)
             if (count == base_len) break;
         }
 
+        // traverse the original array and generate the MST
         for (int i = 0; i < size; i++) {
             if (hash_map.containsKey(map[i])) {
                 List<Boolean> map_val = hash_map.get(map[i]);
