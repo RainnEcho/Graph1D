@@ -103,7 +103,7 @@ public class Graph1D {
     }
 
     /** generate the MST */
-    public void generateMST_Gen2 () {
+    public void generateMST () {
         // convert the map to a priority queue
         Queue<Integer> queue = Arrays.stream(map)
                                      .boxed()
@@ -124,12 +124,13 @@ public class Graph1D {
 
         for (int i = 0; i < size; i++) {
             // identify the addability of each edge
-            boolean checkpoint = (sorted.get(i).get(0) != null && !(set.contains(sorted.get(i).get(0)) && set.contains(sorted.get(i).get(1))));
-            if (hash_map.containsKey(queue.peek())) {
-                hash_map.get(queue.peek()).add(checkpoint);
-            } else {
-                hash_map.put(queue.peek(), new ArrayList<>(Arrays.asList(checkpoint)));
-            }
+            boolean checkpoint = (sorted.get(i).get(0) != null
+                                  && !(set.contains(sorted.get(i).get(0))
+                                       && set.contains(sorted.get(i).get(1))));
+
+            if (hash_map.containsKey(queue.peek())) hash_map.get(queue.peek()).add(checkpoint);
+            else hash_map.put(queue.peek(), new ArrayList<>(Arrays.asList(checkpoint)));
+
             if (checkpoint) {
                 // store the 2D coordinate in the hash set for further judgements
                 set.add(sorted.get(i).get(0));
@@ -144,15 +145,13 @@ public class Graph1D {
         // traverse the original array and generate the MST
         for (int i = 0; i < size; i++) {
             if (hash_map.containsKey(map[i])) {
-                List<Boolean> map_val = hash_map.get(map[i]);
-                if (map_val != null) {
-                    if (!map_val.get(0)) map[i] = Integer.MAX_VALUE;
-                    if (map_val.size() == 1) hash_map.remove(map[i]);
-                    else map_val.remove(0);
+                List<Boolean> values = hash_map.get(map[i]);
+                if (! values.isEmpty()) {
+                    if (! values.get(0)) map[i] = Integer.MAX_VALUE;
+                    values.remove(0);
+                    if (values.isEmpty()) hash_map.remove(map[i]);
                 }
-            } else {
-                map[i] = Integer.MAX_VALUE;
-            }            
+            } else map[i] = Integer.MAX_VALUE;
         }
     }
 
@@ -185,7 +184,7 @@ public class Graph1D {
         System.out.printf ("MST Value: %d\n", graph.getMSTValue());
 
         // generate MST
-        graph.generateMST_Gen2();
+        graph.generateMST();
 
         // print the graph (after MST generation)
         graph.displayGraph();
