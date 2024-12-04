@@ -89,12 +89,16 @@ public class Graph1D {
         int sum = 0, count = 0, size = queue.size();
         for (int i = 0; i < size; i++) {
             // identify the addability of each edge
-            if (sorted.get(i).get(0) != null && !(set.contains(sorted.get(i).get(0)) && set.contains(sorted.get(i).get(1)))) {
+            if (sorted.get(i).get(0) != null 
+                && !(set.contains(sorted.get(i).get(0)) 
+                && set.contains(sorted.get(i).get(1)))) {
+
                     sum += queue.poll();
                     // store the 2D coordinate in the hash set for further judgements
                     set.add(sorted.get(i).get(0));
                     set.add(sorted.get(i).get(1));
                     count++;
+    
             } else queue.poll();
             // break the loop when m = n - 1 (m = base length)
             if (count == base_len) break;
