@@ -46,9 +46,7 @@ public class Graph1D {
     public void addEdge (int vertex1, int vertex2, int weight) {
         if (vertex2 <= vertex1) throw new IllegalArgumentException("illegal parameter sequence");
         if (weight < 0) throw new IllegalArgumentException("invalid weight");
-        int index = (vertex1 == 0) 
-            ? vertex2 - 1 
-            : vertex2 + vertex1 + vertex1 * (base_len - vertex1) - 2;
+        int index = ((base_len + base_len - (vertex1 - 1)) * vertex1) / 2 + vertex2 - vertex1 - 1;
 
         map[index] = weight;
 
@@ -59,9 +57,7 @@ public class Graph1D {
     /** remove two vertices */
     public void removeEdge (int vertex1, int vertex2) {
         if (vertex2 <= vertex1) throw new IllegalArgumentException("illegal parameter sequence");
-        int index = (vertex1 == 0) 
-            ? vertex2 - 1 
-            : vertex2 + vertex1 + vertex1 * (base_len - vertex1) - 2;
+        int index = ((base_len + base_len - (vertex1 - 1)) * vertex1) / 2 + (vertex2 - vertex1) - 1;
 
         map[index] = Integer.MAX_VALUE;
 
@@ -89,8 +85,8 @@ public class Graph1D {
         int sum = 0, count = 0, size = queue.size();
         for (int i = 0; i < size; i++) {
             // identify the addability of each edge
-            if (sorted.get(i).get(0) != null 
-                && !(set.contains(sorted.get(i).get(0)) 
+            if (sorted.get(i).get(0) != null
+                && !(set.contains(sorted.get(i).get(0))
                 && set.contains(sorted.get(i).get(1)))) {
 
                     sum += queue.poll();
@@ -113,7 +109,7 @@ public class Graph1D {
                                      .boxed()
                                      .collect(PriorityQueue::new, PriorityQueue::add, PriorityQueue::addAll);
 
-        // convert the list of the graph at the same time
+        // convert the element sequence of the list compared to the map
         List<List<Integer>> sorted = new ArrayList<>(list);
         Collections.sort(sorted, (a, b) -> {
             int indexA = list.indexOf(a);
@@ -123,6 +119,7 @@ public class Graph1D {
 
         // initialize a hash set to store coordinates to identify the addability of edges
         Set<Integer> set = new HashSet<>();
+
         Map<Integer, List<Boolean>> hash_map = new HashMap<>();
         int count = 0, size = queue.size();
 
@@ -165,12 +162,12 @@ public class Graph1D {
         Graph1D graph = new Graph1D(4);
 
         // add edges
-        graph.addEdge(0, 1, 1);
-        graph.addEdge(0, 2, 3);
-        graph.addEdge(0, 3, 9);
-        graph.addEdge(1, 2, 6);
-        graph.addEdge(1, 3, 6);
-        graph.addEdge(2, 3, 8);
+        graph.addEdge(0, 1, 10);
+        graph.addEdge(0, 2, 6);
+        graph.addEdge(0, 3, 5);
+        graph.addEdge(1, 2, 15);
+        graph.addEdge(1, 3, 4);
+        graph.addEdge(2, 3, 7);
 
         // print the base length
         System.out.printf ("base length: %d\n", graph.getBaseLength());
