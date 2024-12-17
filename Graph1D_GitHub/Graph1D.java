@@ -48,7 +48,7 @@ public class Graph1D {
     }
 
     /** get the original 2D coordinate of an index */
-    public List<Integer> getCoordinateViaIndex (int idx) {
+    public List<Integer> getCoordinateByIndex (int idx) {
         if (idx < 0 || idx >= map.length) throw new IllegalArgumentException("index out of bounds");
 
         int vertex1 = Formulas.toCoordinate_Formula_Vertex1(idx, base_len);
@@ -68,12 +68,12 @@ public class Graph1D {
         Set<Integer> set = new HashSet<>();
 
         for (int i = 0; i < map.length; i++) {
-            if (!set.contains(getCoordinateViaIndex(listOfIndex.get(i)).get(0)) 
-                || !set.contains(getCoordinateViaIndex(listOfIndex.get(i)).get(1))) {
+            if (!set.contains(getCoordinateByIndex(listOfIndex.get(i)).get(0)) 
+                || !set.contains(getCoordinateByIndex(listOfIndex.get(i)).get(1))) {
 
                 sum += mapCopy[i];
-                set.add(getCoordinateViaIndex(listOfIndex.get(i)).get(0));
-                set.add(getCoordinateViaIndex(listOfIndex.get(i)).get(1));
+                set.add(getCoordinateByIndex(listOfIndex.get(i)).get(0));
+                set.add(getCoordinateByIndex(listOfIndex.get(i)).get(1));
                 count++;
                 if (count == base_len) break;
 
@@ -94,15 +94,15 @@ public class Graph1D {
         int count = 0;
 
         for (int i = 0; i < map.length; i++) {
-            boolean checkpoint = (!set.contains(getCoordinateViaIndex(listOfIndex.get(i)).get(0)) 
-                                  || !set.contains(getCoordinateViaIndex(listOfIndex.get(i)).get(1)));
+            boolean checkpoint = (!set.contains(getCoordinateByIndex(listOfIndex.get(i)).get(0)) 
+                                  || !set.contains(getCoordinateByIndex(listOfIndex.get(i)).get(1)));
 
             if (hash_map.containsKey(map[i])) hash_map.get(map[i]).add(checkpoint);
             else hash_map.put(map[i], new ArrayList<>(Arrays.asList(checkpoint)));
 
             if (checkpoint) {
-                set.add(getCoordinateViaIndex(listOfIndex.get(i)).get(0));
-                set.add(getCoordinateViaIndex(listOfIndex.get(i)).get(1));
+                set.add(getCoordinateByIndex(listOfIndex.get(i)).get(0));
+                set.add(getCoordinateByIndex(listOfIndex.get(i)).get(1));
                 count++;
                 if (count == base_len) break;
             }
