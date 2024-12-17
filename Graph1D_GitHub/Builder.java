@@ -62,7 +62,6 @@ class Builder {
                     break;
             }
         }
-        
         scan.close();
     }
 }
