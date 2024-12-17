@@ -5,7 +5,6 @@ public class Graph1D {
     // member variables
     public int base_len;
     public int[] map;
-    public List<List<Integer>> list;
 
     // default constructor
     public Graph1D () {}
@@ -21,10 +20,6 @@ public class Graph1D {
         // initialize the map and fill by Integer.MAX_VALUE, represents no connection between vertices
         map = new int[arr_len];
         Arrays.fill(map, Integer.MAX_VALUE);
-
-        // initialize the array list used to sort the row and column coordinates of every vertex
-        list = new ArrayList<>(arr_len);
-        for (int i = 0; i < arr_len; i++) list.add(new ArrayList<>(Arrays.asList(null, null)));
     }
 
     /** get the base length */
@@ -34,10 +29,17 @@ public class Graph1D {
     public int getGraphLength () { return map.length; }
 
     /** get the original 2D coordinate of an index */
-    public List<Integer> getOriginalCoordinate (int idx) { return list.get(idx); }
+    public List<Integer> getCoordinateViaIndex (int idx) {
+        if (idx < 0 || idx >= map.length) throw new IllegalArgumentException("index out of bounds");
 
-    /** print the list of index */
-    public void displayList () { System.out.printf ("list: %s\n", list); }
+        double discriminant = Math.sqrt((2 * base_len + 1) * (2 * base_len + 1) - 8 * idx);
+
+        int vertex1 = (int) ((2 * base_len + 1 - discriminant) / 2);
+        int rowStart = vertex1 * (2 * base_len - vertex1 + 1) / 2;
+        int vertex2 = vertex1 + 1 + (idx - rowStart);
+
+        return Arrays.asList(vertex1, vertex2);
+    }
 
     /** print the graph */
     public void displayGraph () { System.out.printf ("graph: %s\n", Arrays.toString(map)); }
@@ -45,112 +47,77 @@ public class Graph1D {
     /** add two vertices */
     public void addEdge (int vertex1, int vertex2, int weight) {
         if (vertex2 <= vertex1) throw new IllegalArgumentException("illegal parameter sequence");
-        if (weight < 0) throw new IllegalArgumentException("invalid weight");
+
         int index = ((base_len + base_len - (vertex1 - 1)) * vertex1) / 2 + vertex2 - vertex1 - 1;
-
         map[index] = weight;
-
-        list.get(index).set(0, vertex1);
-        list.get(index).set(1, vertex2);
     }
 
     /** remove two vertices */
     public void removeEdge (int vertex1, int vertex2) {
         if (vertex2 <= vertex1) throw new IllegalArgumentException("illegal parameter sequence");
+
         int index = ((base_len + base_len - (vertex1 - 1)) * vertex1) / 2 + (vertex2 - vertex1) - 1;
-
         map[index] = Integer.MAX_VALUE;
-
-        list.get(index).set(0, null);
-        list.get(index).set(1, null);
     }
 
-    /** get the sum of MST */
+    /** get the value of MST */
     public int getMSTValue () {
-        // convert the map to a priority queue
-        Queue<Integer> queue = Arrays.stream(map)
-                                     .boxed()
-                                     .collect(PriorityQueue::new, PriorityQueue::add, PriorityQueue::addAll);
+        int[] mapCopy = Arrays.copyOf(map, map.length);
+        List<Integer> listOfIndex = new ArrayList<>();
+        for (int i = 0; i < map.length; i++) listOfIndex.add(i);
+        QuickSort.quickSort(mapCopy, listOfIndex);
 
-        // convert the list of the graph at the same time
-        List<List<Integer>> sorted = new ArrayList<>(list);
-        Collections.sort(sorted, (a, b) -> {
-            int indexA = list.indexOf(a);
-            int indexB = list.indexOf(b);
-            return Integer.compare(map[indexA], map[indexB]);
-        });
-
-        // initialize a hash set to store coordinates to identify the addability of edges
+        int sum = 0, count = 0;
         Set<Integer> set = new HashSet<>();
-        int sum = 0, count = 0, size = queue.size();
-        for (int i = 0; i < size; i++) {
-            // identify the addability of each edge
-            if (sorted.get(i).get(0) != null
-                && !(set.contains(sorted.get(i).get(0))
-                && set.contains(sorted.get(i).get(1)))) {
 
-                    sum += queue.poll();
-                    // store the 2D coordinate in the hash set for further judgements
-                    set.add(sorted.get(i).get(0));
-                    set.add(sorted.get(i).get(1));
-                    count++;
-    
-            } else queue.poll();
-            // break the loop when m = n - 1 (m = base length)
-            if (count == base_len) break;
+        for (int i = 0; i < map.length; i++) {
+            if (!set.contains(getCoordinateViaIndex(listOfIndex.get(i)).get(0)) 
+                || !set.contains(getCoordinateViaIndex(listOfIndex.get(i)).get(1))) {
+
+                sum += mapCopy[i];
+                set.add(getCoordinateViaIndex(listOfIndex.get(i)).get(0));
+                set.add(getCoordinateViaIndex(listOfIndex.get(i)).get(1));
+                count++;
+                if (count == base_len) break;
+
+            }
         }
         return sum;
     }
 
-    /** generate the MST */
-    public void generateMST () {
-        // convert the map to a priority queue
-        Queue<Integer> queue = Arrays.stream(map)
-                                     .boxed()
-                                     .collect(PriorityQueue::new, PriorityQueue::add, PriorityQueue::addAll);
+    /** generate MST */
+    public void generateMST_Fast () {
+        int[] mapCopy = Arrays.copyOf(map, map.length);
+        List<Integer> listOfIndex = new ArrayList<>();
+        for (int i = 0; i < map.length; i++) listOfIndex.add(i);
+        QuickSort.quickSort(mapCopy, listOfIndex);
 
-        // convert the element sequence of the list compared to the map
-        List<List<Integer>> sorted = new ArrayList<>(list);
-        Collections.sort(sorted, (a, b) -> {
-            int indexA = list.indexOf(a);
-            int indexB = list.indexOf(b);
-            return Integer.compare(map[indexA], map[indexB]);
-        });
-
-        // initialize a hash set to store coordinates to identify the addability of edges
         Set<Integer> set = new HashSet<>();
-
         Map<Integer, List<Boolean>> hash_map = new HashMap<>();
-        int count = 0, size = queue.size();
+        int count = 0;
 
-        for (int i = 0; i < size; i++) {
-            // identify the addability of each edge
-            boolean checkpoint = (sorted.get(i).get(0) != null
-                                  && !(set.contains(sorted.get(i).get(0))
-                                       && set.contains(sorted.get(i).get(1))));
+        for (int i = 0; i < map.length; i++) {
+            boolean checkpoint = (!set.contains(getCoordinateViaIndex(listOfIndex.get(i)).get(0)) 
+                                  || !set.contains(getCoordinateViaIndex(listOfIndex.get(i)).get(1)));
 
-            if (hash_map.containsKey(queue.peek())) hash_map.get(queue.peek()).add(checkpoint);
-            else hash_map.put(queue.peek(), new ArrayList<>(Arrays.asList(checkpoint)));
+            if (hash_map.containsKey(map[i])) hash_map.get(map[i]).add(checkpoint);
+            else hash_map.put(map[i], new ArrayList<>(Arrays.asList(checkpoint)));
 
             if (checkpoint) {
-                // store the 2D coordinate in the hash set for further judgements
-                set.add(sorted.get(i).get(0));
-                set.add(sorted.get(i).get(1));
+                set.add(getCoordinateViaIndex(listOfIndex.get(i)).get(0));
+                set.add(getCoordinateViaIndex(listOfIndex.get(i)).get(1));
                 count++;
+                if (count == base_len) break;
             }
-            queue.poll();
-            // break the loop when m = n - 1 (m = base length)
-            if (count == base_len) break;
         }
 
-        // traverse the original array and generate the MST
-        for (int i = 0; i < size; i++) {
-            if (hash_map.containsKey(map[i])) {
-                List<Boolean> values = hash_map.get(map[i]);
+        for (int i = 0; i < map.length; i++) {
+            if (hash_map.containsKey(mapCopy[i])) {
+                List<Boolean> values = hash_map.get(mapCopy[i]);
                 if (! values.isEmpty()) {
                     if (! values.get(0)) map[i] = Integer.MAX_VALUE;
                     values.remove(0);
-                    if (values.isEmpty()) hash_map.remove(map[i]);
+                    if (values.isEmpty()) hash_map.remove(mapCopy[i]);
                 }
             } else map[i] = Integer.MAX_VALUE;
         }
@@ -169,25 +136,13 @@ public class Graph1D {
         graph.addEdge(1, 3, 4);
         graph.addEdge(2, 3, 7);
 
-        // print the base length
-        System.out.printf ("base length: %d\n", graph.getBaseLength());
-
-        // print the graph length
-        System.out.printf ("graph length: %d\n", graph.getGraphLength());
-
-        // print the list of index
-        graph.displayList();
-
-        // print the graph
-        graph.displayGraph();
-
-        // print the MST value
-        System.out.printf ("MST Value: %d\n", graph.getMSTValue());
+        // get the MST value
+        System.out.println (graph.getMSTValue());
 
         // generate MST
-        graph.generateMST();
+        graph.generateMST_Fast();
 
-        // print the graph (after MST generation)
+        // display the graph
         graph.displayGraph();
     }
 }
