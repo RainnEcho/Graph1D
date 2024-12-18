@@ -11,13 +11,9 @@ public class Graph1D {
 
     // constructor
     public Graph1D (int capacity) {
-        // base length is the number of vertices of the first row in the initial 2D graph
         base_len = capacity - 1;
 
-        // the formula to calculate the length of the 1D array converted
         int arr_len = Formulas.arrLength_Formula(base_len);
-
-        // initialize the map and fill by Integer.MAX_VALUE, represents no connection between vertices
         map = new int[arr_len];
         Arrays.fill(map, Integer.MAX_VALUE);
     }
