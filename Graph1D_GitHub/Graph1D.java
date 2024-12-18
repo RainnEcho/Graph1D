@@ -55,21 +55,21 @@ public class Graph1D {
 
     /** get the value of MST */
     public int getMSTValue () {
-        int[] mapCopy = Arrays.copyOf(map, map.length);
-        List<Integer> listOfIndex = new ArrayList<>();
-        for (int i = 0; i < map.length; i++) listOfIndex.add(i);
-        QuickSort.quickSort(mapCopy, listOfIndex);
+        int[] map_copy = Arrays.copyOf(map, map.length);
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < map.length; i++) list.add(i);
+        QuickSort.quickSort(map_copy, list);
 
         int sum = 0, count = 0;
         Set<Integer> set = new HashSet<>();
 
         for (int i = 0; i < map.length; i++) {
-            if (!set.contains(getCoordinateByIndex(listOfIndex.get(i)).get(0)) 
-                || !set.contains(getCoordinateByIndex(listOfIndex.get(i)).get(1))) {
+            if (!set.contains(getCoordinateByIndex(list.get(i)).get(0)) 
+                || !set.contains(getCoordinateByIndex(list.get(i)).get(1))) {
 
-                sum += mapCopy[i];
-                set.add(getCoordinateByIndex(listOfIndex.get(i)).get(0));
-                set.add(getCoordinateByIndex(listOfIndex.get(i)).get(1));
+                sum += map_copy[i];
+                set.add(getCoordinateByIndex(list.get(i)).get(0));
+                set.add(getCoordinateByIndex(list.get(i)).get(1));
                 count++;
                 if (count == base_len) break;
 
@@ -80,37 +80,37 @@ public class Graph1D {
 
     /** generate MST */
     public void generateMST_Fast () {
-        int[] mapCopy = Arrays.copyOf(map, map.length);
-        List<Integer> listOfIndex = new ArrayList<>();
-        for (int i = 0; i < map.length; i++) listOfIndex.add(i);
-        QuickSort.quickSort(mapCopy, listOfIndex);
+        int[] map_copy = Arrays.copyOf(map, map.length);
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < map.length; i++) list.add(i);
+        QuickSort.quickSort(map_copy, list);
 
         Set<Integer> set = new HashSet<>();
         Map<Integer, List<Boolean>> hash_map = new HashMap<>();
         int count = 0;
 
         for (int i = 0; i < map.length; i++) {
-            boolean checkpoint = (!set.contains(getCoordinateByIndex(listOfIndex.get(i)).get(0)) 
-                                  || !set.contains(getCoordinateByIndex(listOfIndex.get(i)).get(1)));
+            boolean checkpoint = (!set.contains(getCoordinateByIndex(list.get(i)).get(0)) 
+                                  || !set.contains(getCoordinateByIndex(list.get(i)).get(1)));
 
             if (hash_map.containsKey(map[i])) hash_map.get(map[i]).add(checkpoint);
             else hash_map.put(map[i], new ArrayList<>(Arrays.asList(checkpoint)));
 
             if (checkpoint) {
-                set.add(getCoordinateByIndex(listOfIndex.get(i)).get(0));
-                set.add(getCoordinateByIndex(listOfIndex.get(i)).get(1));
+                set.add(getCoordinateByIndex(list.get(i)).get(0));
+                set.add(getCoordinateByIndex(list.get(i)).get(1));
                 count++;
                 if (count == base_len) break;
             }
         }
 
         for (int i = 0; i < map.length; i++) {
-            if (hash_map.containsKey(mapCopy[i])) {
-                List<Boolean> values = hash_map.get(mapCopy[i]);
+            if (hash_map.containsKey(map_copy[i])) {
+                List<Boolean> values = hash_map.get(map_copy[i]);
                 if (! values.isEmpty()) {
                     if (! values.get(0)) map[i] = Integer.MAX_VALUE;
                     values.remove(0);
-                    if (values.isEmpty()) hash_map.remove(mapCopy[i]);
+                    if (values.isEmpty()) hash_map.remove(map_copy[i]);
                 }
             } else map[i] = Integer.MAX_VALUE;
         }
