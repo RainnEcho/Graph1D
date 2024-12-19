@@ -95,7 +95,6 @@ public class Graph1D {
                 if (count == base_len) break;
             }
         }
-
         for (int i = 0; i < map.length; i++) if (!set_2.contains(i)) map[i] = Integer.MAX_VALUE;
     }
 }

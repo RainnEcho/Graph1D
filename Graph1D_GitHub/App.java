@@ -1,24 +1,28 @@
 public class App {
     /** test used main function */
     public static void main(String[] args) {
-        // create a new instance Graph1D
-        Graph1D graph = new Graph1D(4);
+
+        // create instance Graph1D
+        Graph1D graph1d = new Graph1D(4);
 
         // add edges
-        graph.addEdge(0, 1, 10);
-        graph.addEdge(0, 2, 6);
-        graph.addEdge(0, 3, 5);
-        graph.addEdge(1, 2, 15);
-        graph.addEdge(1, 3, 4);
-        graph.addEdge(2, 3, 7);
+        graph1d.addEdge(0, 1, 10);
+        graph1d.addEdge(0, 2, 8);
+        graph1d.addEdge(0, 3, 7);
+        graph1d.addEdge(1, 2, 6);
+        graph1d.addEdge(1, 3, 14);
+        graph1d.addEdge(2, 3, 2);
 
-        // get MST value
-        System.out.println (graph.getMSTValue());
+        // display the initial graph
+        graph1d.displayGraph();
+
+        // get the value of MST
+        System.out.println (graph1d.getMSTValue());
 
         // generate MST
-        graph.generateMST_Fast();
+        graph1d.generateMST_Fast();
 
-        // display the graph
-        graph.displayGraph();
+        // display the graph after MST generation
+        graph1d.displayGraph();
     }
 }
