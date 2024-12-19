@@ -2,18 +2,17 @@ import java.util.*;
 
 public class Graph1D {
 
-    // member variables
     public int base_len;
     public int[] map;
 
-    // default constructor
+    /** default constructor */
     public Graph1D () {}
 
-    // constructor
+    /** constructor */
     public Graph1D (int capacity) {
         base_len = capacity - 1;
 
-        int arr_len = Formulas.arrLength_Formula(base_len);
+        int arr_len = Formulas.Formula_toArrayLength(base_len);
         map = new int[arr_len];
         Arrays.fill(map, Integer.MAX_VALUE);
     }
@@ -27,19 +26,19 @@ public class Graph1D {
     /** print the graph */
     public void displayGraph () { System.out.printf ("graph: %s\n", Arrays.toString(map)); }
 
-    /** add two vertices */
+    /** add an edge */
     public void addEdge (int vertex1, int vertex2, int weight) {
         if (vertex2 <= vertex1) throw new IllegalArgumentException("illegal parameter sequence");
 
-        int index = Formulas.toIndex_Formula(base_len, vertex1, vertex2);
+        int index = Formulas.Formula_toIndex(base_len, vertex1, vertex2);
         map[index] = weight;
     }
 
-    /** remove two vertices */
+    /** remove an edge */
     public void removeEdge (int vertex1, int vertex2) {
         if (vertex2 <= vertex1) throw new IllegalArgumentException("illegal parameter sequence");
 
-        int index = Formulas.toIndex_Formula(base_len, vertex1, vertex2);
+        int index = Formulas.Formula_toIndex(base_len, vertex1, vertex2);
         map[index] = Integer.MAX_VALUE;
     }
 
@@ -47,8 +46,8 @@ public class Graph1D {
     public List<Integer> getCoordinateByIndex (int idx) {
         if (idx < 0 || idx >= map.length) throw new IllegalArgumentException("index out of bounds");
 
-        int vertex1 = Formulas.toCoordinate_Formula_Vertex1(idx, base_len);
-        int vertex2 = Formulas.toCoordinate_Formula_Vertex2(idx, base_len, vertex1);
+        int vertex1 = Formulas.Formula_toCoordinateVertex1(idx, base_len);
+        int vertex2 = Formulas.Formula_toCoordinateVertex2(idx, base_len, vertex1);
 
         return Arrays.asList(vertex1, vertex2);
     }
@@ -64,15 +63,12 @@ public class Graph1D {
         Set<Integer> set = new HashSet<>();
 
         for (int i = 0; i < map.length; i++) {
-            if (!set.contains(getCoordinateByIndex(list.get(i)).get(0)) 
-                || !set.contains(getCoordinateByIndex(list.get(i)).get(1))) {
-
+            if (!set.contains(getCoordinateByIndex(list.get(i)).get(0)) || !set.contains(getCoordinateByIndex(list.get(i)).get(1))) {
                 sum += map_copy[i];
                 set.add(getCoordinateByIndex(list.get(i)).get(0));
                 set.add(getCoordinateByIndex(list.get(i)).get(1));
                 count++;
                 if (count == base_len) break;
-
             }
         }
         return sum;
@@ -85,34 +81,23 @@ public class Graph1D {
         for (int i = 0; i < map.length; i++) list.add(i);
         QuickSort.quickSort(map_copy, list);
 
-        Set<Integer> set = new HashSet<>();
-        Map<Integer, List<Boolean>> hash_map = new HashMap<>();
         int count = 0;
+        Set<Integer> set1 = new HashSet<>(), set2 = new HashSet<>();
 
-        for (int i = 0; i < map.length; i++) {
-            boolean checkpoint = (!set.contains(getCoordinateByIndex(list.get(i)).get(0)) 
-                                  || !set.contains(getCoordinateByIndex(list.get(i)).get(1)));
-
-            if (hash_map.containsKey(map[i])) hash_map.get(map[i]).add(checkpoint);
-            else hash_map.put(map[i], new ArrayList<>(Arrays.asList(checkpoint)));
-
+        for (int i = 0; i < map_copy.length; i++) {
+            boolean checkpoint = (!set1.contains(getCoordinateByIndex(list.get(i)).get(0))
+                                  || !set1.contains(getCoordinateByIndex(list.get(i)).get(1)));
             if (checkpoint) {
-                set.add(getCoordinateByIndex(list.get(i)).get(0));
-                set.add(getCoordinateByIndex(list.get(i)).get(1));
+                set1.add(getCoordinateByIndex(list.get(i)).get(0));
+                set1.add(getCoordinateByIndex(list.get(i)).get(1));
+                set2.add(list.get(i));
                 count++;
                 if (count == base_len) break;
             }
         }
 
         for (int i = 0; i < map.length; i++) {
-            if (hash_map.containsKey(map_copy[i])) {
-                List<Boolean> values = hash_map.get(map_copy[i]);
-                if (! values.isEmpty()) {
-                    if (! values.get(0)) map[i] = Integer.MAX_VALUE;
-                    values.remove(0);
-                    if (values.isEmpty()) hash_map.remove(map_copy[i]);
-                }
-            } else map[i] = Integer.MAX_VALUE;
+            if (! set2.contains(i)) map[i] = Integer.MAX_VALUE;
         }
     }
 }
