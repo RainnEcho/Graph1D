@@ -86,7 +86,7 @@ public class Graph1D {
 
         for (int i = 0; i < map_copy.length; i++) {
             boolean addable = (!set_1.contains(getCoordinateByIndex(list.get(i)).get(0))
-                                  || !set_1.contains(getCoordinateByIndex(list.get(i)).get(1)));
+                               || !set_1.contains(getCoordinateByIndex(list.get(i)).get(1)));
             if (addable) {
                 set_1.add(getCoordinateByIndex(list.get(i)).get(0));
                 set_1.add(getCoordinateByIndex(list.get(i)).get(1));
