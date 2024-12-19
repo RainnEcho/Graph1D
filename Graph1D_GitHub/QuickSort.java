@@ -30,7 +30,6 @@ public class QuickSort {
         int tempMap = map[i];
         map[i] = map[j];
         map[j] = tempMap;
-
         int tempList = list.get(i);
         list.set (i, list.get(j));
         list.set (j, tempList);

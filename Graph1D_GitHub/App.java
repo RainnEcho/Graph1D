@@ -12,7 +12,7 @@ public class App {
         graph.addEdge(1, 3, 4);
         graph.addEdge(2, 3, 7);
 
-        // get the MST value
+        // get MST value
         System.out.println (graph.getMSTValue());
 
         // generate MST

@@ -23,7 +23,7 @@ public class Graph1D {
     /** get the length of the graph */
     public int getGraphLength () { return map.length; }
 
-    /** print the graph */
+    /** display the graph */
     public void displayGraph () { System.out.printf ("graph: %s\n", Arrays.toString(map)); }
 
     /** add an edge */
@@ -82,22 +82,20 @@ public class Graph1D {
         QuickSort.quickSort(map_copy, list);
 
         int count = 0;
-        Set<Integer> set1 = new HashSet<>(), set2 = new HashSet<>();
+        Set<Integer> set_1 = new HashSet<>(), set_2 = new HashSet<>();
 
         for (int i = 0; i < map_copy.length; i++) {
-            boolean checkpoint = (!set1.contains(getCoordinateByIndex(list.get(i)).get(0))
-                                  || !set1.contains(getCoordinateByIndex(list.get(i)).get(1)));
-            if (checkpoint) {
-                set1.add(getCoordinateByIndex(list.get(i)).get(0));
-                set1.add(getCoordinateByIndex(list.get(i)).get(1));
-                set2.add(list.get(i));
+            boolean addable = (!set_1.contains(getCoordinateByIndex(list.get(i)).get(0))
+                                  || !set_1.contains(getCoordinateByIndex(list.get(i)).get(1)));
+            if (addable) {
+                set_1.add(getCoordinateByIndex(list.get(i)).get(0));
+                set_1.add(getCoordinateByIndex(list.get(i)).get(1));
+                set_2.add(list.get(i));
                 count++;
                 if (count == base_len) break;
             }
         }
 
-        for (int i = 0; i < map.length; i++) {
-            if (! set2.contains(i)) map[i] = Integer.MAX_VALUE;
-        }
+        for (int i = 0; i < map.length; i++) if (!set_2.contains(i)) map[i] = Integer.MAX_VALUE;
     }
 }

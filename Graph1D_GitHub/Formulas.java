@@ -4,7 +4,7 @@ public class Formulas {
         return (base_len * (base_len + 1)) / 2;
     }
 
-    /** the formula to convert a 2D coordinate to an index */
+    /** the formula to convert a 2D coordinate to an 1D index */
     public static int Formula_toIndex (int base_len, int vertex1, int vertex2) {
         return ((base_len + base_len - (vertex1 - 1)) * vertex1) / 2 + vertex2 - vertex1 - 1;
     }

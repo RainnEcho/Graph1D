@@ -52,7 +52,7 @@ class Builder {
                         checkpoint = false;
                         break;
 
-                    // invalid input exception
+                    // invalid input
                     default:
                         System.out.println ("Invalid command (Exception in cases: add/remove/end)");
                         break;
